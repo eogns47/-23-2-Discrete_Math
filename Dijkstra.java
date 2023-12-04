@@ -18,30 +18,30 @@ public class Dijkstra {
 
         try(Scanner scan = new Scanner(new File(FILE))){
             while(scan.hasNextLine()) {
-                String str = scan.nextLine();
-                String[] temp  = str.split(" ");
-                graphnum++;
+                String str = scan.nextLine(); //다음 줄 읽기
+                String[] temp  = str.split(" "); //공백으로 구분하여 배열에 저장
+                graphnum++; //그래프 번호 증가
 
-                if(temp.length == 1) {
-                    totalNodes = Integer.parseInt(temp[0]);
-                    adjacencyMatrix = new int[totalNodes][totalNodes];
+                if(temp.length == 1) { //첫번째 줄이면
+                    totalNodes = Integer.parseInt(temp[0]); //노드 개수 저장
+                    adjacencyMatrix = new int[totalNodes][totalNodes]; //인접행렬 생성
 
-                    int startNode, endNode, weight;
-                    for (int i = 0; i < totalNodes; i++) {
-                        Arrays.fill(adjacencyMatrix[i], Integer.MAX_VALUE);
+                    int startNode, endNode, weight; //시작 노드, 끝 노드, 가중치
+                    for (int i = 0; i < totalNodes; i++) { //인접행렬 초기화
+                        Arrays.fill(adjacencyMatrix[i], Integer.MAX_VALUE); //최대값으로 초기화
                     }
-                    for (int i = 1; i <= totalNodes; i++) {
-                        String[] tokens = scan.nextLine().split(" ");
-                        startNode = Integer.parseInt(tokens[0]);
+                    for (int i = 1; i <= totalNodes; i++) { //인접행렬 생성
+                        String[] tokens = scan.nextLine().split(" "); //공백으로 구분하여 배열에 저장
+                        startNode = Integer.parseInt(tokens[0]);//시작 노드 저장
 
-                        for (int j = 1; j < tokens.length - 1; j += 2) {
-                            endNode = Integer.parseInt(tokens[j]);
-                            weight = Integer.parseInt(tokens[j + 1]);
-                            adjacencyMatrix[startNode-1][endNode-1] = weight;
-                            adjacencyMatrix[endNode-1][startNode-1] = weight;
+                        for (int j = 1; j < tokens.length - 1; j += 2) { //끝 노드와 가중치 저장
+                            endNode = Integer.parseInt(tokens[j]); //끝 노드 저장
+                            weight = Integer.parseInt(tokens[j + 1]); //가중치 저장
+                            adjacencyMatrix[startNode-1][endNode-1] = weight; //인접행렬에 저장
+                            adjacencyMatrix[endNode-1][startNode-1] = weight; //인접행렬에 저장
                         }
                     }
-
+ 
                     System.out.println("그래프 [" + graphnum + "]");
                     //digjkstra구현
                     Dijkstra();
