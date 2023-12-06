@@ -4,8 +4,9 @@ import java.util.ArrayList;
 import java.util.Scanner;
 
 
-public class BfsAndDfs {
-    public static void main(String[] args) {
+public class DfsAndBfs {
+
+    public static void solveDfsandBfs(){
         System.out.println("1. 그래프 탐방 수행 결과\n");
         boolean[][] graph = null; // 부울 행렬로 그래프 인접행렬 표현
         boolean []visted; // 해당 노드의 방문 여부 저장하는 배열

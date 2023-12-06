@@ -11,12 +11,12 @@ public class Dijkstra {
     final static String FILE = "input2.txt";
     private static int totalNodes = 0;
     private static int[][] adjacencyMatrix;
-    public static void solveDijkstra(String filename) {
+    public static void solveDijkstra() {
         int graphnum=0;
         totalNodes=0;
         System.out.println("2. 최단 경로 구하기 수행 결과\n");
 
-        try(Scanner scan = new Scanner(new File(filename))){
+        try(Scanner scan = new Scanner(new File(FILE))){
             while(scan.hasNextLine()) {
                 String str = scan.nextLine();
                 String[] temp  = str.split(" ");
@@ -118,9 +118,5 @@ public class Dijkstra {
             }
         }
         return idx;
-    }
-
-    public static void main(String[] args){
-        solveDijkstra(FILE);
     }
 }
