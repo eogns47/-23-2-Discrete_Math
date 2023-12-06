@@ -1,12 +1,11 @@
 import java.io.File;
 import java.io.FileNotFoundException;
-import java.util.Arrays;
 import java.util.Scanner;
 import java.util.Vector;
 
 
 public class BfsAndDfs {
-    final static String FILE = "input.txt";
+    final static String FILE = "input1.txt";
     private static Vector<Vector<Integer>> nodeSet1;
     public Vector<Integer> nodeSet2;
     private static boolean []visted; 

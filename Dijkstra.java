@@ -25,7 +25,23 @@ public class Dijkstra {
                 if(temp.length == 1) {
                     totalNodes = Integer.parseInt(temp[0]);
                     adjacencyMatrix = new int[totalNodes][totalNodes];
-                    initNodeSet2(scan);
+
+                    int startNode, endNode, weight;
+                    for (int i = 0; i < totalNodes; i++) {
+                        Arrays.fill(adjacencyMatrix[i], Integer.MAX_VALUE);
+                    }
+                    for (int i = 1; i <= totalNodes; i++) {
+                        String[] tokens = scan.nextLine().split(" ");
+                        startNode = Integer.parseInt(tokens[0]);
+
+                        for (int j = 1; j < tokens.length - 1; j += 2) {
+                            endNode = Integer.parseInt(tokens[j]);
+                            weight = Integer.parseInt(tokens[j + 1]);
+                            adjacencyMatrix[startNode-1][endNode-1] = weight;
+                            adjacencyMatrix[endNode-1][startNode-1] = weight;
+                        }
+                    }
+
                     System.out.println("그래프 [" + graphnum + "]");
                     //digjkstra구현
                     Dijkstra();
@@ -37,23 +53,6 @@ public class Dijkstra {
         }
     }
 
-    public static void initNodeSet2(Scanner scan){
-        int startNode, endNode, weight;
-        for (int i = 0; i < totalNodes; i++) {
-            Arrays.fill(adjacencyMatrix[i], Integer.MAX_VALUE);
-        }
-        for (int i = 1; i <= totalNodes; i++) {
-            String[] tokens = scan.nextLine().split(" ");
-            startNode = Integer.parseInt(tokens[0]);
-
-            for (int j = 1; j < tokens.length - 1; j += 2) {
-                endNode = Integer.parseInt(tokens[j]);
-                weight = Integer.parseInt(tokens[j + 1]);
-                adjacencyMatrix[startNode-1][endNode-1] = weight;
-                adjacencyMatrix[endNode-1][startNode-1] = weight;
-            }
-        }
-    }
     public static void Dijkstra(){
         // 초기화 작업
         int[] dMin = new int[totalNodes];  // 최소 경로의 거리 값을 저장할 배열을 노드 개수만큼 생성한다.
@@ -81,9 +80,9 @@ public class Dijkstra {
             dMinDetermined[determinedIdx] = true;   // 해당 노드는 최소 경로 거리가 확정된 것이므로, 바로 true값으로 바꿔줌
             for(int j = 0; j < totalNodes; j++){
                 if(adjacencyMatrix[determinedIdx][j] != Integer.MAX_VALUE){ // 지금 determinedIdx의 노드의 인접노드만 골라서
-                    int newLength = dMin[determinedIdx] + adjacencyMatrix[determinedIdx][j];    // 새로운 길이를 만들고
-                    if(newLength < dMin[j]){    // 해당 새로운 길이가 더 작으면 최소 경로 거리를 갱신 해줘야함
-                        dMin[j] = newLength;    // 최소 경로 거리 갱신
+                    int tempLength = dMin[determinedIdx] + adjacencyMatrix[determinedIdx][j];    // 새로운 길이를 만들고
+                    if(tempLength < dMin[j]){    // 해당 새로운 길이가 더 작으면 최소 경로 거리를 갱신 해줘야함
+                        dMin[j] = tempLength;    // 최소 경로 거리 갱신
                         dMinPath[j] = (ArrayList<Integer>) dMinPath[determinedIdx].clone(); // dterminedIdx의 최소 경로를 복사해옴(clone을 통해 값에 의한 복사)
                         dMinPath[j].add(j + 1); // 갱신하고 나서 자기 자신도 경로에 추가
                     }
