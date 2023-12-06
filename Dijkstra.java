@@ -27,8 +27,6 @@ public class Dijkstra {
                     adjacencyMatrix = new int[totalNodes][totalNodes];
                     initNodeSet2(scan);
                     System.out.println("그래프 [" + graphnum + "]");
-                    System.out.println(totalNodes);
-                    System.out.println();
                     //digjkstra구현
                     Dijkstra();
                 }
@@ -57,42 +55,70 @@ public class Dijkstra {
         }
     }
     public static void Dijkstra(){
-        int[] d_min = new int[totalNodes];  // d_min 배열
-        Arrays.fill(d_min, Integer.MAX_VALUE);
-        Heapq hq = new Heapq();
-        ArrayList<Integer>[] totalPath = new ArrayList[totalNodes];
-        for(int i = 0; i < totalNodes; i++){
-            totalPath[i] = new ArrayList<>();
+        // 초기화 작업
+        int[] dMin = new int[totalNodes];  // 최소 경로의 거리 값을 저장할 배열을 노드 개수만큼 생성한다.
+        boolean[] dMinDetermined = new boolean[totalNodes]; // 최소 경로 거리 값이 확정되었는지를 저장하기 위한 배열을 노드 개수만큼 생성한다.
+        Arrays.fill(dMin, Integer.MAX_VALUE);   // 최소 경로 거리 값이 아직 정해지지 않았으므로 MAX_VALUE로 초기화
+        Arrays.fill(dMinDetermined, false); // 최소 경로 거리 값이 아직 모두 확정되지 않았으므로 false로 초기화
+
+        ArrayList<Integer>[] dMinPath = new ArrayList[totalNodes];  // 경로를 저장할 ArrayList 배열, 이것 또한 노드 개수만큼 생성하고
+        for(int i = 0; i < totalNodes; i++){    // 이 반복문을 통해 각 ArrayList를 초기화 해준다.
+            dMinPath[i] = new ArrayList<>();
         }
-        d_min[0] = 0;
-        //  시작노드가 1이므로 1에 인접한 엣지들을 힙큐에 모두 넣어줌
-        for(int i = 0; i < totalNodes; i++){
+        dMin[0] = 0;    // 노드 1의 최소 경로 거리는 0
+        dMinDetermined[0] = true;   // 노드 1의 최소 경로 거리가 정해졌으므로 true
+        for(int i = 0; i < totalNodes; i++){    // 이 반복문을 통해 노드 1과 인접한 노드들의 거리값으로 해당 노드들의 최소 경로 거리를 할당
+            dMinPath[i].add(1); // 모든 노드의 시작은 1이니까 1 추가
             if(adjacencyMatrix[0][i] != Integer.MAX_VALUE){
-                hq.heapPush(new Path(1, i + 1, adjacencyMatrix[0][i]));
+                dMin[i] = adjacencyMatrix[0][i];
+                dMinPath[i].add(i + 1); // 경로에 자기 자신도 추가
             }
         }
-        while(!hq.isEmpty()){
-            Path path = hq.heapPop();
-            if(d_min[path.endNode - 1] < Integer.MAX_VALUE){
-                if(d_min[path.endNode - 1] == path.weight){
-                    totalPath[path.endNode - 1].add(path.startNode);
-                }else{
-                    // Ignore
-                }
-            }else{
-                totalPath[path.endNode - 1].add(path.startNode);
-                d_min[path.endNode - 1] = path.weight;
-                for(int i = 0; i < totalNodes; i++){
-                    if(adjacencyMatrix[path.endNode - 1][i] != Integer.MAX_VALUE){
-                        hq.heapPush(new Path(path.endNode, i + 1,d_min[path.endNode - 1] + adjacencyMatrix[path.endNode - 1][i]));
+
+        for(int i = 0; i < totalNodes; i++){    // 실제 다익스트라 알고리즘 수행
+            int determinedIdx = findMinIdx(dMin, dMinDetermined);   // 최소 경로 거리 중 가장 작은 값을 가진 노드의 인덱스 가져옴
+            if(determinedIdx == -1)break;   // findMinIdx에서 -1이 반환되었다는 것은, 모든 노드의 최소 경로 거리가 확정되었다는 것, 그러므로 break
+            dMinDetermined[determinedIdx] = true;   // 해당 노드는 최소 경로 거리가 확정된 것이므로, 바로 true값으로 바꿔줌
+            for(int j = 0; j < totalNodes; j++){
+                if(adjacencyMatrix[determinedIdx][j] != Integer.MAX_VALUE){ // 지금 determinedIdx의 노드의 인접노드만 골라서
+                    int newLength = dMin[determinedIdx] + adjacencyMatrix[determinedIdx][j];    // 새로운 길이를 만들고
+                    if(newLength < dMin[j]){    // 해당 새로운 길이가 더 작으면 최소 경로 거리를 갱신 해줘야함
+                        dMin[j] = newLength;    // 최소 경로 거리 갱신
+                        dMinPath[j] = (ArrayList<Integer>) dMinPath[determinedIdx].clone(); // dterminedIdx의 최소 경로를 복사해옴(clone을 통해 값에 의한 복사)
+                        dMinPath[j].add(j + 1); // 갱신하고 나서 자기 자신도 경로에 추가
                     }
                 }
             }
         }
-        for(int i = 0; i < totalNodes; i++){
-            System.out.println(d_min[i]);
+        // 결과 출력
+        System.out.println("----------------------------");
+        System.out.println("시작점: 1");
+        for(int i = 1; i < totalNodes; i++){
+            System.out.printf("정점 [%d]: ", i + 1);
+            for(int j = 0; j < dMinPath[i].size(); j++){
+                if(j == 0){
+                    System.out.printf("%d", dMinPath[i].get(j));
+                }else{
+                    System.out.printf(" - %d", dMinPath[i].get(j));
+                }
+            }
+            System.out.printf(", 길이: %d\n", dMin[i]);
         }
+        System.out.println("=========================");
+        System.out.println();
+    }
 
+    // 최소 경로 거리를 가진 idx를 찾아주는 함수
+    public static int findMinIdx(int[] dMin, boolean[] dMinDetermined){
+        int min = Integer.MAX_VALUE;
+        int idx = -1;
+        for(int i = 0; i < totalNodes; i++){
+            if(dMin[i] < min && !dMinDetermined[i]){
+                min = dMin[i];
+                idx = i;
+            }
+        }
+        return idx;
     }
 
     public static void main(String[] args){
